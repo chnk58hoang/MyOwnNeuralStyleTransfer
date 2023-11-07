@@ -45,11 +45,11 @@ def transform_image(image_path,device,target_shape):
 
 
 def save_image(optimized_img,image_path):
-    optimized_img.squeeze(0).to('cpu').detach().numpy()
+    optimized_img = optimized_img.squeeze(0).to('cpu').detach().numpy()
     out_img = np.moveaxis(optimized_img,0,2)
     out_img += np.array(IMAGENET_MEAN_255).reshape((1, 1, 3))
     out_img = np.clip(out_img,0,255).astype('uint8')
-    cv.imwrite(filename=image_path,img=out_img)
+    cv.imwrite(filename=image_path,img=out_img[:,:,::-1])
 
 
 

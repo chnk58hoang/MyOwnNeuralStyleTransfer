@@ -29,12 +29,13 @@ def get_losses(model,target_content,target_styles,optimized_img,mse_loss_content
 def optimizing_step(optimizer,model,target_content,target_styles,optimized_img,mse_loss_content,mse_loss_style,content_layer,style_layers,weights):
     cnt = 0
     def closure():
+        nonlocal cnt
         total_loss,content_loss,style_loss,variation_loss = get_losses(model,target_content,target_styles,optimized_img,mse_loss_content,mse_loss_style,content_layer,style_layers,weights)
         print(f'Step:{cnt}. Total_loss: {total_loss:.3f}. Content_loss: {content_loss:.3f}. Style_loss: {style_loss:.3f}. Variation_loss: {variation_loss:.3f}')
         optimizer.zero_grad()
         total_loss.backward()
+        cnt += 1
         return total_loss
-    cnt += 1
     optimizer.step(closure)
 
 
@@ -79,10 +80,10 @@ if __name__ == '__main__':
     mse_loss_style = nn.MSELoss(reduction='sum')
 
 
-    "Optimize process"
-    optimizing_step(optimizer=optimizer,model=model,target_content=target_content_feature_map,
-                        target_styles=target_style_feature_maps,optimized_img=optimized_img,mse_loss_content=mse_loss_content,
-                        mse_loss_style = mse_loss_style,content_layer=content_feature_index_name,style_layers=style_feature_indices_names,weights=weights)
+    # "Optimize process"
+    # optimizing_step(optimizer=optimizer,model=model,target_content=target_content_feature_map,
+    #                     target_styles=target_style_feature_maps,optimized_img=optimized_img,mse_loss_content=mse_loss_content,
+    #                     mse_loss_style = mse_loss_style,content_layer=content_feature_index_name,style_layers=style_feature_indices_names,weights=weights)
         
 
 
