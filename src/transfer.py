@@ -59,6 +59,8 @@ if __name__ == '__main__':
     init_img = content_img
     optimized_img = Variable(init_img,requires_grad=True)
 
+    optimized_img = optimized_img.to(device)
+
 
     "Load model"
     model, content_feature_index_name, style_feature_indices_names = get_model(device)
