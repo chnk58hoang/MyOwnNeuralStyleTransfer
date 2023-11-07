@@ -46,6 +46,7 @@ if __name__ == '__main__':
     parser.add_argument('--content_img',type=str,default='tubingen.png')
     parser.add_argument('--style_img',type=str,default='wave_crop.jpg')
     parser.add_argument('--save_path',type=str,default='save_image.png')
+    parser.add_argument('--steps',type=int,default=1000)
     args = parser.parse_args()
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -73,17 +74,17 @@ if __name__ == '__main__':
     weights = {'content':1e5,'style':3e4,'variation':1e0}
 
     "Define optimizer"
-    optimizer = LBFGS((optimized_img,),max_iter=1000,line_search_fn='strong_wolfe')
+    optimizer = LBFGS((optimized_img,),max_iter=args.steps,line_search_fn='strong_wolfe')
 
     "Define loss"
     mse_loss_content = nn.MSELoss(reduction='mean')
     mse_loss_style = nn.MSELoss(reduction='sum')
 
 
-    # "Optimize process"
-    # optimizing_step(optimizer=optimizer,model=model,target_content=target_content_feature_map,
-    #                     target_styles=target_style_feature_maps,optimized_img=optimized_img,mse_loss_content=mse_loss_content,
-    #                     mse_loss_style = mse_loss_style,content_layer=content_feature_index_name,style_layers=style_feature_indices_names,weights=weights)
+    "Optimize process"
+    optimizing_step(optimizer=optimizer,model=model,target_content=target_content_feature_map,
+                        target_styles=target_style_feature_maps,optimized_img=optimized_img,mse_loss_content=mse_loss_content,
+                        mse_loss_style = mse_loss_style,content_layer=content_feature_index_name,style_layers=style_feature_indices_names,weights=weights)
         
 
 
