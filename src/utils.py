@@ -15,6 +15,9 @@ def load_image(img_path, target_shape=None):
         raise Exception(f'Path does not exist: {img_path}')
     img = cv.imread(img_path)[:, :, ::-1]  # [:, :, ::-1] converts BGR (opencv format...) into RGB
 
+    if img.shape[0] > 800:
+        target_shape = 800
+
     if target_shape is not None:  # resize section
         if isinstance(target_shape, int) and target_shape != -1:  # scalar -> implicitly setting the height
             current_height, current_width = img.shape[:2]
