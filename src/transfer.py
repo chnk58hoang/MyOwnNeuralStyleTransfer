@@ -9,27 +9,26 @@ import numpy as np
 
 def get_losses(model: nn.Module,
                target_content: torch.Tensor,
-               target_styles: torch.Tensor,
+               target_styles: list,
                optimized_img: Variable,
                mse_loss_content: nn.MSELoss,
                mse_loss_style: nn.MSELoss,
                content_layer: tuple,
                style_layers: list,
                weights: dict):
-    
     """Calculate total loss value for the style transfer process
 
     Args:
         model: CNN backbone for style transfer
         target_content: tensor extract from content image
-        target_styles: tensors extract from style image
+        target_styles: list of tensors extract from style image
         optimized_img: tensor represent the result image
         mse_loss_content: MSE loss function to compute content loss
         mse_loss_style: MSE loss function to compute style loss
         content_layer: a tuple contains index and name of the layer return content tensor
         style_layers: a list of tuples contains index and name of the layer return style tensors
         weights: a dictionary contains weighting coefficients for each loss component
-    
+
     Returns: total_loss, content_loss, style_loss, variation_loss
     """
 
@@ -57,23 +56,24 @@ def get_losses(model: nn.Module,
 
     return total_loss, content_loss, style_loss, variation_loss
 
+
 def transfer(optimizer,
              model: nn.Module,
              target_content: torch.Tensor,
-             target_styles: torch.Tensor,
+             target_styles: list,
              optimized_img: Variable,
              mse_loss_content: nn.MSELoss,
              mse_loss_style: nn.MSELoss,
              content_layer: tuple,
              style_layers: list,
              weights: dict):
-    
-    """Perform the style transfer process 
+    """Perform the style transfer process
 
     Args:
         optimizer: torch.optim optimizer
+        model: CNN backbone for style transfer
         target_content: tensor extract from content image
-        target_styles: tensors extract from style image
+        target_styles: list of tensors extract from style image
         optimized_img: tensor represent the result image
         mse_loss_content: MSE loss function to compute content loss
         mse_loss_style: MSE loss function to compute style loss
@@ -96,13 +96,9 @@ def transfer(optimizer,
                                                                           content_layer,
                                                                           style_layers,
                                                                           weights)
-        
-        print(f'Step:{cnt}. 
-              Total_loss: {total_loss:.3f}. 
-              Content_loss: {content_loss:.3f}. 
-              Style_loss: {style_loss:.3f}. 
-              Variation_loss: {variation_loss:.3f}')
-        
+
+        print(f'Step:{cnt}.Total_loss: {total_loss:.3f}.Content_loss: {content_loss:.3f}. Style_loss: {style_loss:.3f}.Variation_loss: {variation_loss:.3f}')
+
         # Directly optimize the optimized_img
         optimizer.zero_grad()
         total_loss.backward()
@@ -156,15 +152,15 @@ if __name__ == '__main__':
 
     # Optimize process
     transfer(optimizer=optimizer,
-            model=model,
-            target_content=target_content_feature_map,
-            target_styles=target_style_feature_maps,
-            optimized_img=optimized_img,
-            mse_loss_content=mse_loss_content,
-            mse_loss_style=mse_loss_style,
-            content_layer=content_feature_index_name,
-            style_layers=style_feature_indices_names,
-            weights=weights)
+             model=model,
+             target_content=target_content_feature_map,
+             target_styles=target_style_feature_maps,
+             optimized_img=optimized_img,
+             mse_loss_content=mse_loss_content,
+             mse_loss_style=mse_loss_style,
+             content_layer=content_feature_index_name,
+             style_layers=style_feature_indices_names,
+             weights=weights)
 
     # Save generated image
     save_image(optimized_img, args.save_path)
